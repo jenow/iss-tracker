@@ -21,6 +21,13 @@ oReq.addEventListener("load", function () {
   var lng = json.iss_position.longitude;
   var newLatLng = new L.LatLng(lat, lng);
   issMarker.setLatLng(newLatLng);
+
+  var line = new L.Polyline([newLatLng, newLatLng], {
+    color: 'red',
+    weight: 3,
+    smoothFactor: 1
+  }).addTo(map);
+  map.addLayer(line);
 });
 
 setInterval(function () {
