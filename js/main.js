@@ -13,16 +13,17 @@ map.fitWorld().zoomIn();
 
 var issMarker = L.marker([0, 0], {icon: issIcon}).addTo(map);
 
-setInterval(function () {
-  var oReq = new XMLHttpRequest();
-  oReq.addEventListener("load", function () {
-    var json = JSON.parse(this.responseText);
+var oReq = new XMLHttpRequest();
+oReq.addEventListener("load", function () {
+  var json = JSON.parse(this.responseText);
 
-    var lat = json.iss_position.latitude;
-    var lng = json.iss_position.longitude;
-    var newLatLng = new L.LatLng(lat, lng);
-    issMarker.setLatLng(newLatLng);
-  });
+  var lat = json.iss_position.latitude;
+  var lng = json.iss_position.longitude;
+  var newLatLng = new L.LatLng(lat, lng);
+  issMarker.setLatLng(newLatLng);
+});
+
+setInterval(function () {
   oReq.open("GET", "http://api.open-notify.org/iss-now.json");
   oReq.send();
 }, 1000);
