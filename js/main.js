@@ -13,8 +13,10 @@ map.fitWorld().zoomIn();
 
 var issMarker = L.marker([0, 0], {icon: issIcon}).addTo(map);
 
-var oReq = new XMLHttpRequest();
-oReq.addEventListener("load", function () {
+var oldLatLng = null
+
+var issnowReq = new XMLHttpRequest();
+issnowReq.addEventListener("load", function () {
   var json = JSON.parse(this.responseText);
 
   var lat = json.iss_position.latitude;
@@ -22,15 +24,34 @@ oReq.addEventListener("load", function () {
   var newLatLng = new L.LatLng(lat, lng);
   issMarker.setLatLng(newLatLng);
 
-  var line = new L.Polyline([newLatLng, newLatLng], {
+  var line = new L.Polyline([newLatLng, oldLatLng ? oldLatLng : newLatLng], {
     color: 'red',
     weight: 3,
     smoothFactor: 1
   }).addTo(map);
   map.addLayer(line);
+  oldLatLng = newLatLng;
 });
 
+jsonp("http://api.open-notify.org/iss-pass.json?lat="+"43.6108"+"&lon="+"3.8767", function(data) {
+  var d = new Date(1503661970*1000)
+  console.log(d.getDate(), d.getMonth(), d.getFullYear());
+});
+
+function jsonp(url, callback) {
+  var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+  window[callbackName] = function(data) {
+    delete window[callbackName];
+    document.body.removeChild(script);
+    callback(data);
+  };
+
+  var script = document.createElement('script');
+  script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+  document.body.appendChild(script);
+}
+
 setInterval(function () {
-  oReq.open("GET", "http://api.open-notify.org/iss-now.json");
-  oReq.send();
+  issnowReq.open("GET", "http://api.open-notify.org/iss-now.json");
+  issnowReq.send();
 }, 1000);
