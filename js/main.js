@@ -24,7 +24,7 @@ issnowReq.addEventListener("load", function () {
   var newLatLng = new L.LatLng(lat, lng);
   issMarker.setLatLng(newLatLng);
 
-  var line = new L.Polyline([newLatLng, oldLatLng ? oldLatLng : newLatLng], {
+  var line = new L.Polyline([newLatLng, newLatLng], {
     color: 'red',
     weight: 3,
     smoothFactor: 1
